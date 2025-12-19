@@ -1,8 +1,17 @@
-<!-- views/HomeView.vue -->
 <template>
   <div class="container">
-    <SideNav class="left" :sections="sections" :active-section="activeSection" @navigate="scrollToSection" />
-    <ContentArea class="right" ref="contentAreaRef" :sections="sections" />
+    <SideNav 
+      class="left" 
+      :sections="navSections" 
+      :active-section="activeSection" 
+      @navigate="scrollToSection" 
+    />
+    <ContentArea 
+      class="right" 
+      ref="contentAreaRef" 
+      :section-ids="navSections.map(s => s.id)" 
+      :active-id="activeSection"
+    />
   </div>
 </template>
 
@@ -11,14 +20,20 @@ import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import SideNav from '@/components/SideNav.vue'
 import ContentArea from '@/components/ContentArea.vue'
 
+interface NavSection {
+  id: string
+  name: string
+}
+
 const contentAreaRef = ref<InstanceType<typeof ContentArea> | null>(null)
 const activeSection = ref<string>('home')
 
-const sections = [
-  { id: 'home', name: '首页', content: '首页内容' },
-  { id: 'diary', name: '日记', content: '日记内容' },
-  { id: 'calendar', name: '日历', content: '日历内容' },
-  { id: 'about', name: '关于', content: '关于内容' }
+// HomeView 只关心导航信息
+const navSections: NavSection[] = [
+  { id: 'home', name: '首页' },
+  { id: 'diary', name: '日记' },
+  { id: 'calendar', name: '日历' },
+  { id: 'about', name: '关于' }
 ]
 
 let isScrolling = false
@@ -27,8 +42,7 @@ const scrollToSection = async (id: string) => {
   await nextTick()
   const container = contentAreaRef.value?.scrollContainer
   if (!container) return
-
-  const index = sections.findIndex(s => s.id === id)
+  const index = navSections.findIndex(s => s.id === id)
   if (index !== -1) {
     container.scrollTop = index * window.innerHeight
     activeSection.value = id
@@ -38,23 +52,19 @@ const scrollToSection = async (id: string) => {
 const handleWheel = (e: WheelEvent) => {
   if (isScrolling) return
   isScrolling = true
-
-  const currentIndex = sections.findIndex(s => s.id === activeSection.value)
+  const currentIndex = navSections.findIndex(s => s.id === activeSection.value)
   let nextIndex = currentIndex
-
-  if (e.deltaY > 0 && currentIndex < sections.length - 1) {
+  if (e.deltaY > 0 && currentIndex < navSections.length - 1) {
     nextIndex++
   } else if (e.deltaY < 0 && currentIndex > 0) {
     nextIndex--
   }
-
   if (nextIndex !== currentIndex) {
-    const nextSection = sections[nextIndex]
+    const nextSection = navSections[nextIndex]
     if (nextSection) {
       scrollToSection(nextSection.id)
     }
   }
-
   setTimeout(() => {
     isScrolling = false
   }, 240)
@@ -87,16 +97,14 @@ onUnmounted(() => {
   padding: 0;
   overflow: hidden;
   z-index: 10;
-  background-color: #222222;
+  background-color: #e6c79f;
 }
-
 .left {
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
 }
-
 .right {
   flex: 2;
   height: 100%;

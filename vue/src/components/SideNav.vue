@@ -37,7 +37,7 @@ const onNavigate = (id: string) => {
     display: block;
     font-size: clamp(1.8rem, 6vw, 8rem);
     font-weight: 1000;
-    color: #ffffff;
+    color: #000000;
     transition: all 0.2s ease;
     cursor: pointer;
 }
@@ -49,14 +49,14 @@ const onNavigate = (id: string) => {
     left: 50%;
     width: 0;
     height: 5px;
-    background-color: #000000;
+    background-color: #1cb198;
     transition: all 0.4s ease;
     transform: translateX(-50%);
 }
 
 .link:hover {
-    color: #222222;
-    background-color: #fefefe;
+    color: #ffffff;
+    background-color: #000000;
 }
 
 .link:hover::after {

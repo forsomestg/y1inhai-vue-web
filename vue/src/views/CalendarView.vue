@@ -1,4 +1,3 @@
-<!-- src/views/Calendar.vue -->
 <template>
   <div class="page">
     <h1>日历</h1>
